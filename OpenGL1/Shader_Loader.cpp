@@ -4,15 +4,16 @@
 #include<vector>
 
 using namespace Core;
+using namespace std;
 
 Shader_Loader::Shader_Loader(void) {}
 Shader_Loader::~Shader_Loader(void) {}
 
-std::string Shader_Loader::ReadShader(char *filename)
+string Shader_Loader::ReadShader(char *filename)
 {
 
-	std::string shaderCode;
-	std::ifstream file(filename, std::ios::in);
+	string shaderCode;
+	ifstream file(filename, std::ios::in);
 
 	if (!file.good())
 	{

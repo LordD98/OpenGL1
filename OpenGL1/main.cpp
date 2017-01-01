@@ -1,25 +1,26 @@
 #include "main.h"
 
 using namespace Core;
+using namespace std;
 
 int main(int argc, char **argv)
 {
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(1080, 720);
-	glutCreateWindow("OpenGL First Window");
+	glutInitWindowSize(720, 480);
+	glutCreateWindow("OpenGL Mandelbrot");
+	
+	//glutCreateMenu(menuCallback);
+	//glutAddMenuEntry("File", 0);
+	//glutAddMenuEntry("Tools", 1);
+	//glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	glewInit();
-
 	Init();
-
 	// register callbacks
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(resize);
-	zoom(100);
-	resize(1080, 720);
 	glutMainLoop();
 	glDeleteProgram(program);
 	return 0;
@@ -27,7 +28,6 @@ int main(int argc, char **argv)
 
 void renderScene(void)
 {
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(1.0, 0.0, 0.0, 1.0);//clear red
 
@@ -35,76 +35,58 @@ void renderScene(void)
 	//use the created program
 	glUseProgram(program);
 
-	//draw 3 vertices as triangles
+	zoom(100);
+	
+	//draw 4 vertices as a quad
 	glDrawArrays(GL_QUADS, 0, 4);
 
 	glutSwapBuffers();
 }
 
-void Init()
-{
-
-	glEnable(GL_DEPTH_TEST);
-
-	//load and compile shaders
-	Core::Shader_Loader shaderLoader;
-	program = shaderLoader.CreateProgram("Vertex_Shader.glsl",
-		"Fragment_Shader.glsl");
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-}
-
 void resize (int w, int h)
 {
 	glViewport(0, 0, w, h);
-	GLint *vp = new GLint[4];
-	glGetIntegerv(GL_VIEWPORT, vp);
-	int width = vp[2], height = vp[3];
-	std::cout << " " << width << " " << height << std::endl;
-	ratio = (float)width / height;
-
-	GLint loc = glGetUniformLocation(program, "ratio");
-	if (loc != -1)
-	{
-		glUniform1f(loc, ratio);
-	}
+	ratio = (long double)w / h;
 }
 
 void zoom(GLint maxiters)
 {
+	cout << "zoomstart!" << endl;
+	x = -0.6F;
+	y = 0.0F;
+	long double dy = 2.8L;
+	long double dx = dy * ratio;
+
+	vp.left= x - dx / 2;
+	vp.right = x + dx / 2;
+	vp.top = y + dy / 2;
+	vp.bottom = y - dy / 2;
+
+
 	GLint loc = glGetUniformLocation(program, "maxiters");
 	if (loc != -1)
 	{
-		glUniform1f(loc, maxiters);
+		glUniform1i(loc, maxiters);
 	}
-	vpRect[0] = 1.4F;
-	vpRect[1] = -1.4F;
-	vpRect[2] = -2.2F;
-	vpRect[3] = 1.0F;
-
-	loc = glGetUniformLocation(program, "top");
+	
+	loc = glGetUniformLocation(program, "rect");
 	if (loc != -1)
 	{
-		glUniform1f(loc, 1.4F);
+		glUniform4f(loc, (GLfloat)vp.left, (GLfloat)vp.right, (GLfloat)vp.top, (GLfloat)vp.bottom);
 	}
+}
 
-	loc = glGetUniformLocation(program, "bottom");
-	if (loc != -1)
-	{
-		glUniform1f(loc, -1.4F);
-	}
+void Init()
+{
+	glEnable(GL_DEPTH_TEST);
 
-	loc = glGetUniformLocation(program, "left");
-	if (loc != -1)
-	{
-		glUniform1f(loc, -2.2F);
-	}
+	//load and compile shaders
+	Shader_Loader shaderLoader;
+	program = shaderLoader.CreateProgram("Vertex_Shader.glsl", "Fragment_Shader.glsl");
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
 
-	loc = glGetUniformLocation(program, "right");
-	if (loc != -1)
-	{
-		glUniform1f(loc, 1.0F); //right
-	}
-
-	std::cout << "test" << std::endl;
+void menuCallback(int id) 
+{
+	cout << id << endl;
 }
