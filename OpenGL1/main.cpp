@@ -51,7 +51,6 @@ void resize (int w, int h)
 
 void zoom(GLint maxiters)
 {
-	cout << "zoomstart!" << endl;
 	x = -0.6F;
 	y = 0.0F;
 	long double dy = 2.8L;

@@ -5,14 +5,8 @@ vec3 getColor(int iterations);
 layout(location = 0) out vec4 out_color;
 layout(location = 0) in vec2 position;
 
-uniform vec4 rect; // vec4(-2.7, 1.0, 1.4, -1.4)
-
-uniform float left;				// = -2.7;
-uniform float right;			// = 1.0;
-uniform float top;				// = 1.4;
-uniform float bottom;			// = -1.4;
-
-uniform int maxiters;			// = 100;
+uniform vec4 rect;					// vec4(-2.7, 1.0, 1.4, -1.4)
+uniform int maxiters;				// = 100;
 
 
 vec2 point;
