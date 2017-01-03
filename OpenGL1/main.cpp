@@ -17,6 +17,8 @@ int main(int argc, char **argv)
 	//glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	glewInit();
+	//cout << glewIsExtensionSupported("GLEW_ARB_gpu_shader_fp64") << endl;
+	//cout << glewGetExtension("GLEW_ARB_gpu_shader_fp64") << endl;
 	Init();
 	// register callbacks
 	glutDisplayFunc(renderScene);
@@ -71,7 +73,7 @@ void zoom(GLint maxiters)
 	loc = glGetUniformLocation(program, "rect");
 	if (loc != -1)
 	{
-		glUniform4f(loc, (GLfloat)vp.left, (GLfloat)vp.right, (GLfloat)vp.top, (GLfloat)vp.bottom);
+		glUniform4d(loc, (GLdouble)vp.left, (GLdouble)vp.right, (GLdouble)vp.top, (GLdouble)vp.bottom);
 	}
 }
 
