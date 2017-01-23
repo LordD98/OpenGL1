@@ -7,6 +7,8 @@ layout(location = 0) in vec2 position;
 
 uniform dvec4 rect;					// dvec4(-2.7, 1.0, 1.4, -1.4)
 uniform int maxiters;				// = 100;
+uniform vec3 colorTable[];
+uniform int iterationSpan;
 
 
 dvec2 point;
@@ -39,11 +41,8 @@ void main(void)
 	}	
 	else
 	{
-		out_color = vec4(getColor(iteration), 1.0);
+		out_color = vec4(colorTable[iteration % iterationSpan], 1.0);
 	}
-}
-
-vec3 getColor(int iterations)
-{
-	return vec3(sin(iterations/10), cos(iterations)/10, 1.0);
+	//int pixelXId = int(round((iterationSpan.0-1.0)*((position.x + 1.0)/2.0)));
+	//out_color = vec4(colorTable[pixelXId].x, colorTable[pixelXId].y, colorTable[pixelXId].z, 1.0);	
 }

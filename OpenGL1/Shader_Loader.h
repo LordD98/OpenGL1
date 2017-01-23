@@ -21,7 +21,7 @@ namespace Core
 		Shader_Loader(void);
 		~Shader_Loader(void);
 		GLuint CreateProgram(char* VertexShaderFilename,
-			char* FragmentShaderFilename);
+			char* FragmentShaderFilename, int iterationSpan);
 
 	};
 }

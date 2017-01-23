@@ -2,6 +2,7 @@
 #include<iostream>
 #include<fstream>
 #include<vector>
+#include <regex>
 
 using namespace Core;
 using namespace std;
@@ -13,17 +14,17 @@ string Shader_Loader::ReadShader(char *filename)
 {
 
 	string shaderCode;
-	ifstream file(filename, std::ios::in);
+	ifstream file(filename, ios::in);
 
 	if (!file.good())
 	{
-		std::cout << "Can't read file " << filename << std::endl;
-		std::terminate();
+		cout << "Can't read file " << filename << endl;
+		terminate();
 	}
 
-	file.seekg(0, std::ios::end);
+	file.seekg(0, ios::end);
 	shaderCode.resize((unsigned int)file.tellg());
-	file.seekg(0, std::ios::beg);
+	file.seekg(0, ios::beg);
 	file.read(&shaderCode[0], shaderCode.size());
 	file.close();
 	return shaderCode;
@@ -49,21 +50,27 @@ GLuint Shader_Loader::CreateShader(GLenum shaderType, std::string
 
 		int info_log_length = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_log_length);
-		std::vector<char> shader_log(info_log_length);
+		vector<char> shader_log(info_log_length);
 		glGetShaderInfoLog(shader, info_log_length, NULL, &shader_log[0]);
-		std::cout << "ERROR compiling shader: " << shaderName << std::endl << &shader_log[0] << std::endl;
+		cout << "ERROR compiling shader: " << shaderName << endl << &shader_log[0] << endl;
 		return 0;
 	}
 	return shader;
 }
 
 GLuint Shader_Loader::CreateProgram(char* vertexShaderFilename,
-	char* fragmentShaderFilename)
+	char* fragmentShaderFilename, int iterationSpan)
 {
 
 	//read the shader files and save the code
-	std::string vertex_shader_code = ReadShader(vertexShaderFilename);
-	std::string fragment_shader_code = ReadShader(fragmentShaderFilename);
+	string vertex_shader_code = ReadShader(vertexShaderFilename);
+	string fragment_shader_code = ReadShader(fragmentShaderFilename);
+	
+	//modify the shader code with regex to match the number of iterations contained in the table
+	//also do other things with the shader code
+	regex reg1("uniform vec3 colorTable\\[[0-9]*\\];");
+	fragment_shader_code = regex_replace(fragment_shader_code, reg1, "uniform vec3 colorTable[" + to_string(iterationSpan) + "];");
+
 
 	GLuint vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_shader_code, "vertex shader");
 	GLuint fragment_shader = CreateShader(GL_FRAGMENT_SHADER, fragment_shader_code, "fragment shader");
@@ -82,9 +89,9 @@ GLuint Shader_Loader::CreateProgram(char* vertexShaderFilename,
 
 		int info_log_length = 0;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &info_log_length);
-		std::vector<char> program_log(info_log_length);
+		vector<char> program_log(info_log_length);
 		glGetProgramInfoLog(program, info_log_length, NULL, &program_log[0]);
-		std::cout << "Shader Loader : LINK ERROR" << std::endl << &program_log[0] << std::endl;
+		cout << "Shader Loader : LINK ERROR" << endl << &program_log[0] << endl;
 		return 0;
 	}
 	return program;
