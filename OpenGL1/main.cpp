@@ -188,7 +188,7 @@ void handleKey(unsigned char key, int x, int y)
 		Init();
 		renderScene();
 		//glutDisplayFunc(renderScene);	//Not
-		//glutReshapeFunc(resize);		//shure
+		//glutReshapeFunc(resize);		//sure
 		//glutKeyboardFunc(handleKey);	//on
 		//glutMainLoop();				//these
 		break;
