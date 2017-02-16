@@ -46,19 +46,19 @@ void renderScene(void)
 	glClearColor(1.0, 0.0, 0.0, 1.0);					//clear red
 	glUseProgram(program);								//use the created program
 
-	
 	zoom(100);
-	
 
 	glDrawArrays(GL_QUADS, 0, 4);						//draw 4 vertices as a quad
 	glutSwapBuffers();									//Swap image buffers
+	printf("Sucessfully rendered frame!\n");
 }
 
 void resize (int w, int h)
 {
 	glViewport(0, 0, w, h);
 	ratio = (long double)w / h;
-
+	printf("redrawing!\n");
+	renderScene();
 }
 
 void zoom(GLint maxiters)
