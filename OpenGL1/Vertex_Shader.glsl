@@ -10,4 +10,4 @@ void main(void)
 										vec4( -1.0, 1.0, 0.0, 1.0)); 
 	position = vec2(vertices[gl_VertexID][0], vertices[gl_VertexID][1]);
 	gl_Position = vertices[gl_VertexID];
-}
+/*id:1x1x1*/}

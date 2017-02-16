@@ -1,27 +1,11 @@
 #pragma once
 
-#include "Dependencies/glew/glew.h"
-#include "Dependencies/freeglut/freeglut.h"
+//#define string char*
+
 #include <iostream>
+#include "main.h"
+//#include <vector>
 
-namespace Core
-{
-
-	class Shader_Loader
-	{
-	private:
-
-		std::string ReadShader(char *filename);
-		GLuint CreateShader(GLenum shaderType,
-			std::string source,
-			char* shaderName);
-
-	public:
-
-		Shader_Loader(void);
-		~Shader_Loader(void);
-		GLuint CreateProgram(char* VertexShaderFilename,
-			char* FragmentShaderFilename, int iterationSpan);
-
-	};
-}
+GLuint CreateProgram(char* vertexShaderFilename, char* fragmentShaderFilename, int iterationSpan);
+GLuint CreateShader(GLenum shaderType, char* source, char* shaderName);
+char* ReadShader(char* filename);

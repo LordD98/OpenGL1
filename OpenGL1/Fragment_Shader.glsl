@@ -1,4 +1,4 @@
-#version 420 core
+	#version 420 core
 
 vec3 getColor(int iterations);
 
@@ -7,7 +7,7 @@ layout(location = 0) in vec2 position;
 
 uniform dvec4 rect;					// dvec4(-2.7, 1.0, 1.4, -1.4)
 uniform int maxiters;				// = 100;
-uniform vec3 colorTable[];
+uniform vec3 colorTable[5678];
 uniform int iterationSpan;
 
 
@@ -45,4 +45,4 @@ void main(void)
 	}
 	//int pixelXId = int(round((iterationSpan.0-1.0)*((position.x + 1.0)/2.0)));
 	//out_color = vec4(colorTable[pixelXId].x, colorTable[pixelXId].y, colorTable[pixelXId].z, 1.0);	
-}
+/*id:1x1x2*/}
