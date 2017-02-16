@@ -7,7 +7,7 @@ layout(location = 0) in vec2 position;
 
 uniform dvec4 rect;					// dvec4(-2.7, 1.0, 1.4, -1.4)
 uniform int maxiters;				// = 100;
-uniform vec3 colorTable[5678];
+uniform vec3 colorTable[0];
 uniform int iterationSpan;
 
 
