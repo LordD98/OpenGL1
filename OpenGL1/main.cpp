@@ -13,8 +13,8 @@ int main(int argc, char **argv)
 	colors[3] = newFloatColor(0.6F, 0.5F, 0.5F);
 	colors[4] = newFloatColor(0.0F, 0.0F, 1.0F);
 	generateColorTable(ITERATION_SPAN, colors, 5);
-	//float *ntable = (float *)memcpy(ntable,table, ITERATION_SPAN*3*sizeof(float));
 	presentColorTable(table, ITERATION_SPAN);
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
