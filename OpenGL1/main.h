@@ -17,7 +17,7 @@ void handleKey(unsigned char key, int x, int y);
 void zoom(GLint maxiters);
 void menuCallback(int id);
 void generateColorTable(int iterationSpan, struct floatColor baseColors[], int numOfBaseColors);
-//void presentColorTable(GLfloat *table, int iterationSpan);
+void presentColorTable(GLfloat *table, int iterationSpan);
 struct floatColor newFloatColor(float r, float g, float b);
 
 GLfloat *table;
