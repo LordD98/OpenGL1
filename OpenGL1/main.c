@@ -12,8 +12,8 @@ int main(int argc, char **argv)
 	baseColors[4] = newFloatColor(0.0F, 0.0F, 1.0F); 
 	iterationSpan = (numOfBaseColors-1)*10 + 1;
 	generateColorTable(iterationSpan, baseColors, numOfBaseColors);
-	//float *ntable = (float *)memcpy(ntable,table, iterationSpan*3*sizeof(float));
-	presentColorTable(table, iterationSpan);
+	//presentColorTable(table, iterationSpan);
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
@@ -28,8 +28,11 @@ int main(int argc, char **argv)
 	glewInit();
 	//cout << glewIsExtensionSupported("GLEW_ARB_gpu_shader_fp64") << endl;
 	//cout << glewGetExtension("GLEW_ARB_gpu_shader_fp64") << endl;
+	
+	
 	Init();
-	// register callbacks
+
+
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(resize);
 	glutKeyboardFunc(handleKey);
@@ -118,44 +121,42 @@ void generateColorTable(int iterationSpan, struct floatColor *baseColors, int nu
 	table = (GLfloat*)calloc(3 * iterationSpan, sizeof(GLfloat));		//...< ... .<.. .<.. ...
 	int lastColorIndex = numOfBaseColors - 1;
 	int numOfIntervs = numOfBaseColors - 1;
-	if ((iterationSpan-1) % numOfIntervs == 0)			//numOfIntervs muss iterationSpan-1 teilen!!! 
-	{
-		int lengthOfInterv = (iterationSpan - 1) / numOfIntervs;
-		/*0 iterations =^= colors[0]
-		<iterationSpan> iteration =^= colors[end]
-		.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	//iterationSpan = 16 = 15 + 1
-		,			,			,			,			,			,	//numberOfBaseColors = 6;	5 * interv(3)
-		,					,					,					,	//numberOfBaseColors = 4;	3 * interv(5)
+	assert((iterationSpan - 1) % numOfIntervs == 0);			//numOfIntervs muss iterationSpan-1 teilen!!! 
+	int lengthOfInterv = (iterationSpan - 1) / numOfIntervs;
+	/*0 iterations =^= colors[0]
+	<iterationSpan> iteration =^= colors[end]
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	//iterationSpan = 16 = 15 + 1
+	,			,			,			,			,			,	//numberOfBaseColors = 6;	5 * interv(3)
+	,					,					,					,	//numberOfBaseColors = 4;	3 * interv(5)
 	
-		.	.	.	.	.	.	.	.	.	.	.	.	.				//iterationSpan = 13
-		.			.			.			.			.				//numOfBaseColors = 5; ninterv = nbasecolor
-		*/
-		{
-			float rDiff, gDiff, bDiff, r, g, b, intervallAdvancement;		//All variables declared
-			struct floatColor startBaseColor, endBaseColor;						//before the nested loop
-			for (int i = 0; i < numOfIntervs; i++)							//to increase performance
-			{												
-				startBaseColor = baseColors[i];
-				endBaseColor = baseColors[i + 1];
-				rDiff = endBaseColor.x - startBaseColor.x;
-				gDiff = endBaseColor.y - startBaseColor.y;
-				bDiff = endBaseColor.z - startBaseColor.z;
+	.	.	.	.	.	.	.	.	.	.	.	.	.				//iterationSpan = 13
+	.			.			.			.			.				//numOfBaseColors = 5; ninterv = nbasecolor
+	*/
+	{
+		float rDiff, gDiff, bDiff, r, g, b, intervallAdvancement;		//All variables declared
+		struct floatColor startBaseColor, endBaseColor;						//before the nested loop
+		for (int i = 0; i < numOfIntervs; i++)							//to increase performance
+		{												
+			startBaseColor = baseColors[i];
+			endBaseColor = baseColors[i + 1];
+			rDiff = endBaseColor.x - startBaseColor.x;
+			gDiff = endBaseColor.y - startBaseColor.y;
+			bDiff = endBaseColor.z - startBaseColor.z;
 
-				for (int j = 0; j < lengthOfInterv; j++)
-				{
-					intervallAdvancement = (float)j / lengthOfInterv;
-					r = startBaseColor.x + rDiff * intervallAdvancement;
-					g = startBaseColor.y + gDiff * intervallAdvancement;
-					b = startBaseColor.z + bDiff * intervallAdvancement;
-					table[3 * (i*lengthOfInterv + j)]     = r;
-					table[3 * (i*lengthOfInterv + j) + 1] = g;
-					table[3 * (i*lengthOfInterv + j) + 2] = b;
-				}
+			for (int j = 0; j < lengthOfInterv; j++)
+			{
+				intervallAdvancement = (float)j / lengthOfInterv;
+				r = startBaseColor.x + rDiff * intervallAdvancement;
+				g = startBaseColor.y + gDiff * intervallAdvancement;
+				b = startBaseColor.z + bDiff * intervallAdvancement;
+				table[3 * (i*lengthOfInterv + j)]     = r;
+				table[3 * (i*lengthOfInterv + j) + 1] = g;
+				table[3 * (i*lengthOfInterv + j) + 2] = b;
 			}
-			table[3 * (iterationSpan - 1)]     = baseColors[numOfIntervs].x;
-			table[3 * (iterationSpan - 1) + 1] = baseColors[numOfIntervs].y;
-			table[3 * (iterationSpan - 1) + 2] = baseColors[numOfIntervs].z;
 		}
+		table[3 * (iterationSpan - 1)]     = baseColors[numOfIntervs].x;
+		table[3 * (iterationSpan - 1) + 1] = baseColors[numOfIntervs].y;
+		table[3 * (iterationSpan - 1) + 2] = baseColors[numOfIntervs].z;
 	}
 }
 
