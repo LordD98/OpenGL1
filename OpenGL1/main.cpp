@@ -1,5 +1,8 @@
+// change of real part = (dx = change of mouse in pixels)/WIDTH*spanX
+// pixels = (dr = change of real part)/spanX * WIDTH
+
+
 #include "main.h"
-#define ITERATION_SPAN 37
 
 using namespace Core;
 using namespace std;
@@ -32,8 +35,13 @@ int main(int argc, char **argv)
 	Init();
 	// register callbacks
 	glutDisplayFunc(renderScene);
-	glutReshapeFunc(resize);
+	glutReshapeFunc(handleResize);
 	glutKeyboardFunc(handleKey);
+	glutSpecialFunc(handleSpecialKey);
+	glutMouseFunc(handleMouse);
+	glutMotionFunc(handleMouseMotion);
+	glutPassiveMotionFunc(handleMousePassiveMotion);
+
 	glutMainLoop();
 	glDeleteProgram(program);
 
@@ -47,31 +55,74 @@ void renderScene(void)
 	glClearColor(1.0, 0.0, 0.0, 1.0);					//clear red
 	glUseProgram(program);								//use the created program
 
-	
-	zoom(100);
-	
+	setParams(X, Y, spanY, MAXITERS);					// starts with -0.6, 0.0, 2.8, 100
 
 	glDrawArrays(GL_QUADS, 0, 4);						//draw 4 vertices as a quad
 	glutSwapBuffers();									//Swap image buffers
 }
 
-void resize (int w, int h)
+void handleMouse(int button, int state, int x, int y)
 {
+	if (button == GLUT_LEFT_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			mouseDownPositionX = x;
+			mouseDownPositionY = y;
+			oldX = X;
+			oldY = Y;
+			lmbPressed = true;
+		}
+		else if (state == GLUT_UP)
+		{
+			lmbPressed = false;
+		}
+	}
+}
+
+void handleMouseMotion(int x, int y)
+{
+	mousex = x;
+	mousey = y;
+	//cout << "Motion:" << x << ", " << y << endl;
+	if (lmbPressed)
+	{
+		GLint dx = -(x - mouseDownPositionX);	// X has to be inverted here
+		GLint dy =   y - mouseDownPositionY;
+		X = oldX + static_cast<long double>(dx)/static_cast<long double>(WIDTH) * spanX;
+		Y = oldY + static_cast<long double>(dy) / static_cast<long double>(HEIGHT) * spanY;
+		//cout << "Moved by " << dx << ", " << dy << endl;
+		glutPostRedisplay();
+	}
+}
+
+void handleMousePassiveMotion(int x, int y)
+{
+	mousex = x;
+	mousey = y;
+	
+	//cout << "Passive motion:" << x << ", " << y << endl;
+}
+
+void handleResize (int w, int h)
+{
+	WIDTH = w;
+	HEIGHT = h;
 	glViewport(0, 0, w, h);
 	ratio = (long double)w / h;
 }
 
-void zoom(GLint maxiters)
+void setParams(long double rPos, long double iPos, long double ySpan, GLint maxiters)
 {
-	x = -0.6L;
-	y = 0.0L;
-	long double dy = 2.8L;
-	long double dx = dy * ratio;
+	X = rPos;
+	Y = iPos;
+	spanY = ySpan;
+	spanX = spanY * ratio;
 
-	vp.left= x - dx / 2;
-	vp.right = x + dx / 2;
-	vp.top = y + dy / 2;
-	vp.bottom = y - dy / 2;
+	vp.left= X - spanX / 2;
+	vp.right = X + spanX / 2;
+	vp.top = Y + spanY / 2;
+	vp.bottom = Y - spanY / 2;
 
 
 	GLint loc = glGetUniformLocation(program, "maxiters");
@@ -97,6 +148,8 @@ void zoom(GLint maxiters)
 	{
 		glUniform1i(loc, ITERATION_SPAN);
 	}
+	glutPostRedisplay();	// UNNECESSARY (just to test performance)
+	//cout << "Zoom" << endl;
 }
 
 void Init()
@@ -181,6 +234,14 @@ void handleKey(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
+	case 'c':
+		setParams(-0.6L, 0.0L, 2.8L, MAXITERS);
+		glutPostRedisplay();
+		glutWarpPointer(WIDTH/2, HEIGHT/2);
+		break;
+	case 'f':
+		glutFullScreenToggle();
+		break;
 	case 'r':
 		//glDetachShader;
 		
@@ -192,5 +253,47 @@ void handleKey(unsigned char key, int x, int y)
 		//glutKeyboardFunc(handleKey);	//on
 		//glutMainLoop();				//these
 		break;
+	case 'q':
+		//center on cursor
+		X -= (0.5L-static_cast<long double>(x)/static_cast<long double>(WIDTH)) * spanX;	// dr has to be subtracted here
+		Y += (0.5L-static_cast<long double>(y)/static_cast<long double>(HEIGHT)) * spanY;
+		setParams(X, Y, spanY, MAXITERS);
+		glutPostRedisplay();
+		glutWarpPointer(WIDTH/2, HEIGHT/2);	// move cursor to center of window
+		break;
 	}
+}
+
+void handleSpecialKey(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_LEFT:
+		X += PIXEL_STRAFE_LD/static_cast<long double>(WIDTH) * spanX;
+		setParams(X, Y, spanY, MAXITERS);
+		glutPostRedisplay();
+		break;
+	case GLUT_KEY_RIGHT:
+		X -= PIXEL_STRAFE_LD/static_cast<long double>(WIDTH) * spanX;
+		setParams(X, Y, spanY, MAXITERS);
+		glutPostRedisplay();
+		break;
+	case GLUT_KEY_UP:
+		Y -= PIXEL_STRAFE_LD/static_cast<long double>(WIDTH) * spanY;
+		setParams(X, Y, spanY, MAXITERS);
+		glutPostRedisplay();
+		break;
+	case GLUT_KEY_DOWN:
+		Y += PIXEL_STRAFE_LD/static_cast<long double>(WIDTH) * spanY;
+		setParams(X, Y, spanY, MAXITERS);
+		glutPostRedisplay();
+		break;
+	default:
+		break;
+	}
+}
+
+void inspectPoint(long double rPos, long double iPos)
+{
+	setParams(rPos, iPos, spanY, MAXITERS);
 }
