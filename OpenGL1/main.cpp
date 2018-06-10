@@ -122,7 +122,8 @@ void generateColorTable(int iterationSpan, struct floatColor baseColors[], int n
 	if ((iterationSpan-1) % numOfIntervs == 0)			//numOfIntervs muss iterationSpan-1 teilen!!! 
 	{
 		int lengthOfInterv = (iterationSpan - 1) / numOfIntervs;
-		/*0 iterations =^= colors[0]
+		/*
+		0 iterations =^= colors[0]
 		<iterationSpan> iteration =^= colors[end]
 		.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	//iterationSpan = 16 = 15 + 1
 		,			,			,			,			,			,	//numberOfBaseColors = 6;	5 * interv(3)
