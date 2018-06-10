@@ -26,7 +26,7 @@ void main(void)
 	dvec2 val = point;
 	while(iteration<maxiters)             //actual iteration-count is i-1 at the end
 	{
-		if(val[0]*val[0] + val[1]*val[1] > 4)
+		if(val[0]*val[0] + val[1]*val[1] > 4.0)
 			break;
 		else
 			iteration++;
